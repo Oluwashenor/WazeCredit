@@ -13,18 +13,19 @@ namespace WazeCredit.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
+        public HomeVM homeVM { get; set; }
+        private readonly IMarketForecaster _marketForecaster;
 
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
+        public HomeController(IMarketForecaster marketForecaster)
+        {
+            homeVM = new HomeVM();
+            _marketForecaster = marketForecaster;
+        }
 
         public IActionResult Index()
         {
             HomeVM homeVM = new HomeVM();
-            MarketForecaster marketForecaster = new MarketForecaster();
-            MarketResult currentMarket = marketForecaster.GetMarketPrediction();
+            MarketResult currentMarket = _marketForecaster.GetMarketPrediction();
             switch (currentMarket.MarketCondition)
             {
                 case MarketCondition.StableUp:
