@@ -1,0 +1,12 @@
+﻿@model List<string>
+
+
+<h1>@ViewData["Title"]</h1>
+
+<p>Following are the configuration from APPSettings</p>
+<ul>
+	@foreach(var message in Model)
+	{
+		<li>@message</li>
+	}
+</ul>

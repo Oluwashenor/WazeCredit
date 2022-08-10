@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WazeCredit.Data;
 using WazeCredit.Models.Service;
+using WazeCredit.Utility.AppSettingsClasses;
 
 namespace WazeCredit
 {
@@ -37,6 +38,10 @@ namespace WazeCredit
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddTransient<IMarketForecaster, MarketForecaster>();
+            services.Configure<WazeForecastSettings>(Configuration.GetSection("WazeForecast"));
+            services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
+            services.Configure<SendGridSettings>(Configuration.GetSection("SendGrid"));
+            services.Configure<TwilioSettings>(Configuration.GetSection("Twilio"));
 
         }
 
