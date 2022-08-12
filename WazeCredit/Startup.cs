@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WazeCredit.Data;
-using WazeCredit.Models.Service;
+using WazeCredit.Service;
 using WazeCredit.Utility.AppSettingsClasses;
 using WazeCredit.Utility.DI_Config;
 

@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WazeCredit.Models;
-using WazeCredit.Models.Service;
 using WazeCredit.Models.ViewModels;
+using WazeCredit.Service;
 using WazeCredit.Utility.AppSettingsClasses;
 
 namespace WazeCredit.Controllers

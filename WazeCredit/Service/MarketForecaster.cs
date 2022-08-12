@@ -1,14 +1,16 @@
-﻿namespace WazeCredit.Models.Service
+﻿using WazeCredit.Models;
+
+namespace WazeCredit.Service
 {
-    public class MarketForecasterV2 : IMarketForecaster
+    public class MarketForecaster : IMarketForecaster
     {
         public MarketResult GetMarketPrediction()
         {
             // Call api to do come complex calculations and current stock market forecast.
             return new MarketResult
             {
-                MarketCondition = MarketCondition.Volatile
-             };
+                MarketCondition = MarketCondition.StableUp
+            };
         }
     }
 
