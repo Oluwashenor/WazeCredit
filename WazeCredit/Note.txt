@@ -1,0 +1,21 @@
+Service Lifetime
+
+*** Singleton ***
+-Same instance for the life time of application unless it is restarted
+-Should be used very carefully
+-services.AddSingleton<>
+-it sends same instance every time it is requested for.it will only change when application is restart
+
+*** Scoped ***
+- Same instance for one scope(One request in most cases).
+- services.AddScoped<>
+- Not ideal for multi threading 
+- Sends a new instance for each request
+- if you click on a view or link for that page load if instance is requested 10 times it will send same object
+
+
+*** Transient *** 
+- Different instance every time the service is injected.
+- services.AddTransient<>
+- Transient service sends a new instance every time it is requested
+- if you click on a view or link for that page load if instance is requested 10 10 times it will send 10 different objects
