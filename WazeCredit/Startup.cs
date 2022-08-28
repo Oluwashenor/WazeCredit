@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using WazeCredit.Data;
 using WazeCredit.Middleware;
 using WazeCredit.Service;
+using WazeCredit.Service.LifeTimeExample;
 using WazeCredit.Utility.AppSettingsClasses;
 using WazeCredit.Utility.DI_Config;
 
@@ -41,6 +42,9 @@ namespace WazeCredit
             services.AddControllersWithViews();
             services.AddTransient<IMarketForecaster, MarketForecaster>();
             services.AddAppSettingsConfig(Configuration);
+            services.AddTransient<TransientService>();
+            services.AddScoped<ScopedService>();
+            services.AddSingleton<SingletonService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
