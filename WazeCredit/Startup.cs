@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,15 @@ namespace WazeCredit
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddTransient<IMarketForecaster, MarketForecaster>();
+            //services.AddSingleton<IMarketForecaster>(new MarketForecaster());
+            //services.AddTransient<MarketForecasterV2>();
+            //services.AddSingleton<MarketForecasterV2>();
+            //services.AddTransient(typeof(MarketForecaster));
+            //services.AddTransient(typeof(IMarketForecaster), typeof(MarketForecaster));
+
+
+            // services.Replace(ServiceDescriptor.Transient<IMarketForecaster, MarketForecaster>()); // Replaces the former implementation
+            //services.RemoveAll<IMarketForecaster>(); remoes all implemetations
             services.AddAppSettingsConfig(Configuration);
             services.AddTransient<TransientService>();
             services.AddScoped<ScopedService>();

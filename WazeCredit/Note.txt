@@ -19,3 +19,15 @@ Service Lifetime
 - services.AddTransient<>
 - Transient service sends a new instance every time it is requested
 - if you click on a view or link for that page load if instance is requested 10 10 times it will send 10 different objects
+
+
+Ways of using depency Injection
+-Constructor 
+-Action
+-view
+-Middleware
+
+anything you inject in the constructor of a middleware would be used as a singleton no matter which life time it has.
+invokeasync is a way of injecting into middleware
+
+TryAdd (it checks if it as been added beofre, then if it has it doesnt add)
