@@ -18,15 +18,17 @@ namespace WazeCredit.Controllers
         public HomeVM homeVM { get; set; }
         private readonly IMarketForecaster _marketForecaster;
         private readonly WazeForecastSettings _wazeForecastOptions;
+        private readonly ICreditValidator _creditValidator;
         [BindProperty]
-        private CreditApplication CreditModel { get; set; }
+        public CreditApplication CreditModel { get; set; }
       
 
-        public HomeController(IMarketForecaster marketForecaster,IOptions<WazeForecastSettings> wazeForecastOptions)
+        public HomeController(IMarketForecaster marketForecaster,IOptions<WazeForecastSettings> wazeForecastOptions, ICreditValidator creditValidator)
         {
             homeVM = new HomeVM();
             _wazeForecastOptions = wazeForecastOptions.Value;
             _marketForecaster = marketForecaster;
+            _creditValidator = creditValidator; 
         }
 
         public IActionResult Index()
@@ -79,6 +81,38 @@ namespace WazeCredit.Controllers
 
             };
             return View(CreditModel);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        [ActionName("CreditApplication")]
+        public async Task<IActionResult> CreditApplicationPOST()
+        {
+            if (ModelState.IsValid)
+            {
+                var (validationPassed, errorMessages) = await _creditValidator.PassAllValidations(CreditModel);
+                CreditResult creditResult = new CreditResult()
+                {
+                    ErrorList = errorMessages,
+                    CreditID = 0,
+                    Success = validationPassed
+                };
+                if (validationPassed)
+                {
+                    return RedirectToAction(nameof(CreditResult), creditResult);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(CreditResult), creditResult);
+                }
+            }
+            
+            return View(CreditModel);
+        }
+
+        public IActionResult CreditResult(CreditResult creditResult)
+        {
+            return View(creditResult);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
