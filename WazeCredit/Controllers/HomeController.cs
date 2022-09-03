@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using WazeCredit.Data;
 using WazeCredit.Models;
 using WazeCredit.Models.ViewModels;
 using WazeCredit.Service;
@@ -19,20 +20,25 @@ namespace WazeCredit.Controllers
         private readonly IMarketForecaster _marketForecaster;
         private readonly WazeForecastSettings _wazeForecastOptions;
         private readonly ICreditValidator _creditValidator;
+        private readonly ApplicationDbContext _db;
+        private readonly ILogger _logger;
         [BindProperty]
         public CreditApplication CreditModel { get; set; }
       
 
-        public HomeController(IMarketForecaster marketForecaster,IOptions<WazeForecastSettings> wazeForecastOptions, ICreditValidator creditValidator)
+        public HomeController(IMarketForecaster marketForecaster, ApplicationDbContext db,ILogger<HomeController> logger, IOptions<WazeForecastSettings> wazeForecastOptions, ICreditValidator creditValidator)
         {
             homeVM = new HomeVM();
             _wazeForecastOptions = wazeForecastOptions.Value;
             _marketForecaster = marketForecaster;
             _creditValidator = creditValidator; 
+            _db = db;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Home controllr Index Called");
             HomeVM homeVM = new HomeVM();
             MarketResult currentMarket = _marketForecaster.GetMarketPrediction();
             switch (currentMarket.MarketCondition)
@@ -86,7 +92,7 @@ namespace WazeCredit.Controllers
         [ValidateAntiForgeryToken]
         [HttpPost]
         [ActionName("CreditApplication")]
-        public async Task<IActionResult> CreditApplicationPOST()
+        public async Task<IActionResult> CreditApplicationPOST([FromServices] Func<CreditApprovedEnums, ICreditApproved> _creditService)
         {
             if (ModelState.IsValid)
             {
@@ -99,6 +105,11 @@ namespace WazeCredit.Controllers
                 };
                 if (validationPassed)
                 {
+                    CreditModel.CreditApproved = _creditService(CreditModel.Salary > 5000 ? CreditApprovedEnums.High : CreditApprovedEnums.Low).GetCreditApproved(CreditModel);
+                    _db.CreditApplicationModel.Add(CreditModel);
+                    _db.SaveChanges();
+                    creditResult.CreditID = CreditModel.Id;
+                    creditResult.CreditApproved = CreditModel.CreditApproved;
                     return RedirectToAction(nameof(CreditResult), creditResult);
                 }
                 else

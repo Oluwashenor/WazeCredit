@@ -8,12 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WazeCredit.Data;
 using WazeCredit.Middleware;
+using WazeCredit.Models;
 using WazeCredit.Service;
 using WazeCredit.Service.LifeTimeExample;
 using WazeCredit.Utility.AppSettingsClasses;
@@ -55,13 +57,27 @@ namespace WazeCredit
             services.AddScoped<IValidationChecker, AddressValidationChecker>();
             services.AddScoped<IValidationChecker, CreditValidationChecker>();
             services.AddScoped<ICreditValidator, CreditValidator>();
+
+
+            services.AddScoped<CreditApprovedHigh>();
+            services.AddScoped<CreditApprovedLow>();
+            services.AddScoped<Func<CreditApprovedEnums, ICreditApproved>>(ServiceProvider => range =>
+            {
+                switch (range)
+                {
+                    case CreditApprovedEnums.High : return ServiceProvider.GetService<CreditApprovedHigh>();
+                    case CreditApprovedEnums.Low : return ServiceProvider.GetService<CreditApprovedHigh>();
+                    default:return ServiceProvider.GetService<CreditApprovedLow>();
+                    
+                }
+            });
             services.AddTransient<TransientService>();
             services.AddScoped<ScopedService>();
             services.AddSingleton<SingletonService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -78,7 +94,7 @@ namespace WazeCredit
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            loggerFactory.AddFile("logs/creditApp-log-{Date}.txt");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<CustomMiddleware>();
